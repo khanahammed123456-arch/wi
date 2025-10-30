@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# PyTorch
+*.pth
+*.pth.tar
+*.pt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Detectron2
+*.pkl
+.pth
+detectron2/
+
+# Outputs
+output/
+inference/
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Dataset (exclude if needed)
+# datasets/
+
+# Large model files (managed separately)
+# model/*.pth
+
+# Experiment tracking
+tensorboard_logs/
+wandb/
+
+# Temporary files
+*.tmp
+*.bak
+matches.json
