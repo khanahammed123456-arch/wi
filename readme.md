@@ -30,18 +30,9 @@ cd SoM-MIMO
 ```
 
 2. **Install PyTorch** (follow [official instructions](https://pytorch.org/)):
-```bash
-# Example for CUDA 11.1
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu111
-```
+
 
 3. **Install Detectron2** (follow [official instructions](https://github.com/facebookresearch/detectron2)):
-```bash
-git clone https://github.com/facebookresearch/detectron2.git
-cd detectron2
-python -m pip install -e .
-cd ..
-```
 
 4. **Install other dependencies**:
 ```bash
