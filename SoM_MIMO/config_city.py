@@ -2,7 +2,6 @@ from detectron2.config import CfgNode as CN
 from datetime import datetime
 import os
 
-
 def add_mimo_config_city(cfg):
     current_datetime = datetime.now().strftime("%m%d_%H%M%S")
     cfg.OUTPUT_DIR = os.path.join(cfg.OUTPUT_DIR, current_datetime)
@@ -61,18 +60,9 @@ def add_mimo_config_city(cfg):
     cfg.MODEL.MIMO.WIFO_ADAPTER_POOL = 4
 
     # =========================
-    # Semantic-aware CSI reliability gate
-    # =========================
-    cfg.MODEL.MIMO.USE_SEMANTIC_CSI_GATE = True
-    cfg.MODEL.MIMO.SEMANTIC_CSI_GATE_HIDDEN = 128
-    cfg.MODEL.MIMO.SEMANTIC_CSI_GATE_INIT_BIAS = -1.3862944
-    cfg.MODEL.MIMO.SEMANTIC_CSI_GATE_TAU = 0.05
-    cfg.MODEL.MIMO.SEMANTIC_CSI_GATE_LOSS_WEIGHT = 0.05
-
-    # =========================
     # CSI auxiliary loss
     # =========================
-    cfg.MODEL.MIMO.WIFO_AUX_LOSS_WEIGHT = 0.3
+    cfg.MODEL.MIMO.WIFO_AUX_LOSS_WEIGHT = 1.0
 
     # =========================
     # LR multipliers
@@ -82,7 +72,7 @@ def add_mimo_config_city(cfg):
     cfg.MODEL.MIMO.BACKBONE_LR_MULT = 1.0
 
     # =========================
-    # Legacy residual gate flag, kept disabled.
+    # 鏂板锛氭畫宸棬鎺?
     # =========================
     cfg.MODEL.MIMO.USE_RESIDUAL_GATE = False
     cfg.MODEL.MIMO.RESIDUAL_GATE_HIDDEN = 64
