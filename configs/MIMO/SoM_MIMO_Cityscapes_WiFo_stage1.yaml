@@ -1,0 +1,90 @@
+_BASE_: "../Base-RCNN-FPN.yaml"
+
+MODEL:
+  WEIGHTS: "model/SoM_MIMO_C48.pth"
+
+  META_ARCHITECTURE: "SoM_MIMO_RCNN"
+
+  BACKBONE:
+    NAME: "build_som_mimo_backbone_CITY"
+    FREEZE_AT: 3
+
+  MASK_ON: True
+
+  ROI_HEADS:
+    NUM_CLASSES: 8
+
+  MIMO:
+    C: 48
+    HFF: 1
+    MCE: 1
+    MCE_DEPTH: 6
+    CHANNEL: 1
+    TANH: 1
+    BITS: 4
+
+    Nt: 2
+    Nr: 2
+    INFER_SNR: 0
+
+    USE_WIFO: False
+    WIFO_CKPT: "model/wifo_base.pkl"
+    FREEZE_WIFO: True
+
+    T_HIST: 16
+    T_PRED: 8
+
+    # true / outdated / pred
+    CSI_MODE: "outdated"
+
+    # New: lag for outdated CSI
+    CSI_LAG: 16
+
+    USE_DESCRIPTOR: False
+
+    WIFO_H: 16
+    WIFO_W: 16
+    CSI_DIR: "data/csi"
+
+    DOPPLER_FREQ: 120.0
+    TRAIN_DOPPLER_RANGE: [0.0, 90.0]
+    TRAIN_SNR_RANGE: [-5.0, 15.0]
+
+    USE_WIFO_ADAPTER: True
+    WIFO_ADAPTER_HIDDEN: 128
+    WIFO_ADAPTER_POOL: 4
+
+INPUT:
+  MIN_SIZE_TRAIN: (800, 832, 864, 896, 928, 960, 992, 1024)
+  MIN_SIZE_TRAIN_SAMPLING: "choice"
+  MIN_SIZE_TEST: 1024
+  MAX_SIZE_TRAIN: 2048
+  MAX_SIZE_TEST: 2048
+
+DATASETS:
+  TRAIN: ("cityscapes_fine_instance_seg_train",)
+  TEST: ("cityscapes_fine_instance_seg_val",)
+
+DATALOADER:
+  NUM_WORKERS: 4
+
+SOLVER:
+  IMS_PER_BATCH: 1
+  BASE_LR: 0.00001
+  MAX_ITER: 10000
+  STEPS: (7000, 9000)
+  CHECKPOINT_PERIOD: 5000
+
+  WEIGHT_DECAY: 0.05
+  WEIGHT_DECAY_BIAS: 1e-5
+
+  AMP:
+    ENABLED: True
+
+  CLIP_GRADIENTS:
+    ENABLED: True
+    CLIP_TYPE: "norm"
+    CLIP_VALUE: 5.0
+
+TEST:
+  EVAL_PERIOD: 0

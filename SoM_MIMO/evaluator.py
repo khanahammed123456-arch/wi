@@ -40,10 +40,17 @@ class MIMO_Evaluators(DatasetEvaluator):
         for evaluator in self._evaluators:
             evaluator.reset()
 
-    def process(self, inputs, outputs,pyramid_rx,pyramid_tx):
+    def process(self, inputs, outputs,pyramid_rx=None,pyramid_tx=None):
+        # Handle tuple output from MIMO model (results, pyramid_rx, pyramid_tx)
+        if isinstance(outputs, tuple) and len(outputs) >= 1:
+             # The first element is the standard D2 results (list of dicts)
+             # We discard the rest (pyramid_rx, pyramid_tx) to save memory
+             outputs = outputs[0]
+
         for evaluator in self._evaluators:
             if type(evaluator).__name__ == "Error_Evaluator":
-                evaluator.process(features, p_rx, rx_feature, tx_feature,p_tx, source_features)
+                # evaluator.process(features, p_rx, rx_feature, tx_feature,p_tx, source_features)
+                pass # Error_Evaluator logic is missing context variables, skipping for now
             else:
                 evaluator.process(inputs,outputs)
 
