@@ -63,6 +63,10 @@ def add_mimo_config_city(cfg):
     # CSI auxiliary loss
     # =========================
     cfg.MODEL.MIMO.WIFO_AUX_LOSS_WEIGHT = 1.0
+    cfg.MODEL.MIMO.WIFO_DELTA_LOSS_WEIGHT = 0.0
+    cfg.MODEL.MIMO.USE_TRUE_CSI_DISTILL = False
+    cfg.MODEL.MIMO.TRUE_CSI_DISTILL_WEIGHT = 0.0
+    cfg.MODEL.MIMO.TRUE_CSI_DISTILL_NORMALIZE = True
 
     # =========================
     # LR multipliers
@@ -72,7 +76,7 @@ def add_mimo_config_city(cfg):
     cfg.MODEL.MIMO.BACKBONE_LR_MULT = 1.0
 
     # =========================
-    # 鏂板锛氭畫宸棬鎺?
+    # 新增：残差门控
     # =========================
     cfg.MODEL.MIMO.USE_RESIDUAL_GATE = False
     cfg.MODEL.MIMO.RESIDUAL_GATE_HIDDEN = 64

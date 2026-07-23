@@ -11,7 +11,8 @@ from SoM_MIMO import add_mimo_config_city, get_evaluator
 from custom_mapper import WiFo_SoM_Mapper
 
 
-# 鍙鐜拌缃?torch.backends.cudnn.benchmark = False
+# 可复现设置
+torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.deterministic = True
 
 
@@ -36,14 +37,20 @@ class Trainer(DefaultTrainer):
 
         freeze_wifo = bool(getattr(cfg.MODEL.MIMO, "FREEZE_WIFO", True))
 
-        # 鍙湪 FREEZE_WIFO=True 鏃讹紝棰濆鍐荤粨鍚嶅瓧閲屽惈 wifo 鐨勫弬鏁?        if freeze_wifo:
+        # FREEZE_WIFO=True 时只冻结 WiFo 主体，保留 wifo_adapter 可训练。
+        if freeze_wifo:
             for name, param in model.named_parameters():
-                if "wifo" in name.lower():
+                lower_name = name.lower()
+                is_wifo_backbone = (
+                    "backbone.wifo." in lower_name
+                    and "wifo_adapter" not in lower_name
+                )
+                if is_wifo_backbone:
                     param.requires_grad = False
 
             print("\n" + "=" * 60)
-            print("Stage 1: REAL WiFo forward + frozen WiFo parameters.")
-            print("Train SoM-MIMO to adapt to predicted CSI.")
+            print("Stage 1: REAL WiFo forward + frozen WiFo backbone.")
+            print("Train SoM-MIMO + wifo_adapter to adapt predicted CSI.")
             print("=" * 60 + "\n")
         else:
             print("\n" + "=" * 60)
@@ -51,7 +58,7 @@ class Trainer(DefaultTrainer):
             print("Jointly train WiFo + SoM-MIMO with predicted CSI.")
             print("=" * 60 + "\n")
 
-        # 鍙€夛細鎵撳嵃閮ㄥ垎鍏抽敭鍙傛暟鏄惁鍙缁冿紝鏂逛究鏍告煡
+        # 可选：打印部分关键参数是否可训练，方便核查
         print("[Trainability Check]")
         for name, param in model.named_parameters():
             if (
@@ -68,12 +75,17 @@ class Trainer(DefaultTrainer):
     @classmethod
     def build_optimizer(cls, cfg, model):
         """
-        缁欓殢鏈哄垵濮嬪寲鐨?WiFo / wifo_adapter 鏇村ぇ瀛︿範鐜囥€?        鐩爣锛?        - backbone / detector 淇濇寔杈冪ǔ
-        - WiFo 涓讳綋鏇村揩瀛?        - adapter 瀛﹀緱鏈€蹇?        """
+        给随机初始化的 WiFo / wifo_adapter 更大学习率。
+        目标：
+        - backbone / detector 保持较稳
+        - WiFo 主体更快学
+        - adapter 学得最快
+        """
         base_lr = cfg.SOLVER.BASE_LR
         weight_decay = cfg.SOLVER.WEIGHT_DECAY
 
-        # 濡傛灉 yaml 娌″啓锛屽氨鐢ㄩ粯璁ゅ€?        wifo_lr_mult = float(getattr(cfg.MODEL.MIMO, "WIFO_LR_MULT", 5.0))
+        # 如果 yaml 没写，就用默认值
+        wifo_lr_mult = float(getattr(cfg.MODEL.MIMO, "WIFO_LR_MULT", 5.0))
         wifo_adapter_lr_mult = float(getattr(cfg.MODEL.MIMO, "WIFO_ADAPTER_LR_MULT", 10.0))
         backbone_lr_mult = float(getattr(cfg.MODEL.MIMO, "BACKBONE_LR_MULT", 1.0))
 
@@ -86,7 +98,8 @@ class Trainer(DefaultTrainer):
 
             lr = base_lr * backbone_lr_mult
 
-            # adapter 浼樺厛绾ф渶楂?            if "backbone.wifo_adapter" in name:
+            # adapter 优先级最高
+            if "backbone.wifo_adapter" in name:
                 lr = base_lr * wifo_adapter_lr_mult
             elif "backbone.wifo" in name:
                 lr = base_lr * wifo_lr_mult
@@ -119,10 +132,11 @@ class Trainer(DefaultTrainer):
 
 def setup(args):
     """
-    鍒涘缓閰嶇疆骞舵墽琛屽熀纭€鍒濆鍖?    """
+    创建配置并执行基础初始化
+    """
     cfg = get_cfg()
 
-    # 娉ㄥ唽 SoM-MIMO / WiFo 鎵╁睍閰嶇疆
+    # 注册 SoM-MIMO / WiFo 扩展配置
     add_mimo_config_city(cfg)
 
     cfg.merge_from_file(args.config_file)

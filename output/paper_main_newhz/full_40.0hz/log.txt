@@ -1,0 +1,1187 @@
+[07/17 13:35:19] detectron2 INFO: Rank of current process: 0. World size: 1
+[07/17 13:35:21] detectron2 INFO: Environment info:
+-------------------------------  ----------------------------------------------------------------------------------
+sys.platform                     linux
+Python                           3.9.25 (main, Nov  3 2025, 22:33:05) [GCC 11.2.0]
+numpy                            1.23.5
+detectron2                       0.6 @/home/sun/detectron2/detectron2
+detectron2._C                    not built correctly: No module named 'detectron2._C'
+Compiler ($CXX)                  c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+DETECTRON2_ENV_MODULE            <not set>
+PyTorch                          2.1.0 @/home/sun/miniconda3/envs/SoM-MIMO/lib/python3.9/site-packages/torch
+PyTorch debug build              False
+torch._C._GLIBCXX_USE_CXX11_ABI  False
+GPU available                    Yes
+GPU 0                            NVIDIA GeForce RTX 4060 Laptop GPU (arch=8.9)
+Driver version                   580.88
+CUDA_HOME                        None - invalid!
+Pillow                           11.1.0
+torchvision                      0.16.0 @/home/sun/miniconda3/envs/SoM-MIMO/lib/python3.9/site-packages/torchvision
+torchvision arch flags           /home/sun/miniconda3/envs/SoM-MIMO/lib/python3.9/site-packages/torchvision/_C.so
+fvcore                           0.1.5.post20221221
+iopath                           0.1.9
+cv2                              4.9.0
+-------------------------------  ----------------------------------------------------------------------------------
+PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2023.1-Product Build 20230303 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.1.1 (Git Hash 64f6bcbcbab628e96f33a62c3e975f8535a7bde4)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX512
+  - CUDA Runtime 11.8
+  - NVCC architecture flags: -gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_90,code=sm_90;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 8.7
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.8, CUDNN_VERSION=8.7.0, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=old-style-cast -Wno-invalid-partial-specialization -Wno-unused-private-field -Wno-aligned-allocation-unavailable -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Werror=cast-function-type -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_DISABLE_GPU_ASSERTS=ON, TORCH_VERSION=2.1.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, 
+
+[07/17 13:35:21] detectron2 INFO: Command line arguments: Namespace(config_file='configs/MIMO/SoM_MIMO_Cityscapes_WiFo_stage2.yaml', resume=False, eval_only=True, num_gpus=1, num_machines=1, machine_rank=0, dist_url='tcp://127.0.0.1:50152', opts=['MODEL.WEIGHTS', './output/ft0616_truecsi_distill001_lr2e6_5k/model_final.pth', 'MODEL.MIMO.USE_WIFO', 'True', 'MODEL.MIMO.CSI_MODE', 'pred', 'MODEL.MIMO.CSI_LAG', '16', 'MODEL.MIMO.T_HIST', '16', 'MODEL.MIMO.T_PRED', '8', 'MODEL.MIMO.C', '48', 'MODEL.MIMO.INFER_SNR', '0', 'MODEL.MIMO.DOPPLER_FREQ', '40.0', 'OUTPUT_DIR', './output/paper_main_newhz/full_40.0hz'])
+[07/17 13:35:21] detectron2 INFO: Contents of args.config_file=configs/MIMO/SoM_MIMO_Cityscapes_WiFo_stage2.yaml:
+_BASE_: "../Base-RCNN-FPN.yaml"
+
+MODEL:
+  WEIGHTS: "./model/SoM_MIMO_C48.pth"
+  META_ARCHITECTURE: "SoM_MIMO_RCNN"
+
+  BACKBONE:
+    NAME: "build_som_mimo_backbone_CITY"
+    FREEZE_AT: 3
+
+  MASK_ON: True
+
+  ROI_HEADS:
+    NUM_CLASSES: 8
+
+  MIMO:
+    C: 48
+    HFF: 1
+    MCE: 1
+    MCE_DEPTH: 6
+    CHANNEL: 1
+    TANH: 1
+    BITS: 4
+
+    Nt: 2
+    Nr: 2
+    INFER_SNR: 0
+
+    USE_WIFO: True
+    WIFO_CKPT: "model/wifo_base.pkl"
+    FREEZE_WIFO: False
+
+    T_HIST: 16
+    T_PRED: 8
+
+    CSI_MODE: "pred"
+    CSI_LAG: 16
+
+    USE_DESCRIPTOR: False
+    WIFO_H: 16
+    WIFO_W: 16
+    CSI_DIR: "data/csi"
+
+    DOPPLER_FREQ: 120.0
+    TRAIN_DOPPLER_RANGE: [0.0, 480.0]
+    TRAIN_SNR_RANGE: [-5.0, 5.0]
+
+    USE_WIFO_ADAPTER: True
+    WIFO_ADAPTER_HIDDEN: 128
+    WIFO_ADAPTER_POOL: 4
+
+    WIFO_AUX_LOSS_WEIGHT: 1.0
+    WIFO_DELTA_LOSS_WEIGHT: 0.0
+    USE_TRUE_CSI_DISTILL: False
+    TRUE_CSI_DISTILL_WEIGHT: 0.0
+    TRUE_CSI_DISTILL_NORMALIZE: True
+
+    WIFO_LR_MULT: 5.0
+    WIFO_ADAPTER_LR_MULT: 10.0
+    BACKBONE_LR_MULT: 1.0
+
+
+INPUT:
+  MIN_SIZE_TRAIN: (800, 832, 864, 896, 928, 960, 992, 1024)
+  MIN_SIZE_TRAIN_SAMPLING: "choice"
+  MIN_SIZE_TEST: 1024
+  MAX_SIZE_TRAIN: 2048
+  MAX_SIZE_TEST: 2048
+
+DATASETS:
+  TRAIN: ("cityscapes_fine_instance_seg_train",)
+  TEST: ("cityscapes_fine_instance_seg_val",)
+
+DATALOADER:
+  NUM_WORKERS: 4
+
+SOLVER:
+  IMS_PER_BATCH: 1
+  BASE_LR: 0.00002
+  MAX_ITER: 150000
+  STEPS: (120000, 140000)
+  CHECKPOINT_PERIOD: 10000
+
+  WEIGHT_DECAY: 0.05
+  WEIGHT_DECAY_BIAS: 1e-5
+
+  AMP:
+    ENABLED: True
+
+  CLIP_GRADIENTS:
+    ENABLED: True
+    CLIP_TYPE: "norm"
+    CLIP_VALUE: 5.0
+
+TEST:
+  EVAL_PERIOD: 0
+
+[07/17 13:35:21] detectron2 INFO: Running with full config:
+CUDNN_BENCHMARK: false
+DATALOADER:
+  ASPECT_RATIO_GROUPING: true
+  FILTER_EMPTY_ANNOTATIONS: true
+  NUM_WORKERS: 4
+  REPEAT_SQRT: true
+  REPEAT_THRESHOLD: 0.0
+  SAMPLER_TRAIN: TrainingSampler
+DATASETS:
+  PRECOMPUTED_PROPOSAL_TOPK_TEST: 1000
+  PRECOMPUTED_PROPOSAL_TOPK_TRAIN: 2000
+  PROPOSAL_FILES_TEST: []
+  PROPOSAL_FILES_TRAIN: []
+  TEST:
+  - cityscapes_fine_instance_seg_val
+  TRAIN:
+  - cityscapes_fine_instance_seg_train
+FLOAT32_PRECISION: ''
+GLOBAL:
+  HACK: 1.0
+INPUT:
+  CROP:
+    ENABLED: false
+    SIZE:
+    - 0.9
+    - 0.9
+    TYPE: relative_range
+  FORMAT: BGR
+  MASK_FORMAT: polygon
+  MAX_SIZE_TEST: 2048
+  MAX_SIZE_TRAIN: 2048
+  MIN_SIZE_TEST: 1024
+  MIN_SIZE_TRAIN:
+  - 800
+  - 832
+  - 864
+  - 896
+  - 928
+  - 960
+  - 992
+  - 1024
+  MIN_SIZE_TRAIN_SAMPLING: choice
+  RANDOM_FLIP: horizontal
+MODEL:
+  ANCHOR_GENERATOR:
+    ANGLES:
+    - - -90
+      - 0
+      - 90
+    ASPECT_RATIOS:
+    - - 0.5
+      - 1.0
+      - 2.0
+    NAME: DefaultAnchorGenerator
+    OFFSET: 0.0
+    SIZES:
+    - - 32
+    - - 64
+    - - 128
+    - - 256
+    - - 512
+  BACKBONE:
+    FREEZE_AT: 3
+    NAME: build_som_mimo_backbone_CITY
+  DEVICE: cuda
+  FPN:
+    FUSE_TYPE: sum
+    IN_FEATURES:
+    - res2
+    - res3
+    - res4
+    - res5
+    NORM: ''
+    OUT_CHANNELS: 256
+  KEYPOINT_ON: false
+  LOAD_PROPOSALS: false
+  MASK_ON: true
+  META_ARCHITECTURE: SoM_MIMO_RCNN
+  MIMO:
+    BACKBONE_LR_MULT: 1.0
+    BITS: 4
+    C: 48
+    CHANNEL: 1
+    CSI_DIR: data/csi
+    CSI_DUMP_DIR: ana/csi_dump
+    CSI_DUMP_MAX_SAMPLES: 500
+    CSI_LAG: 16
+    CSI_MODE: pred
+    DOPPLER_FREQ: 40.0
+    ENABLE_CSI_DUMP: false
+    FREEZE_WIFO: false
+    HFF: 1
+    INFER_SNR: 0
+    MCE: 1
+    MCE_DEPTH: 6
+    Nr: 2
+    Nt: 2
+    RESIDUAL_GATE_HIDDEN: 64
+    TANH: 1
+    TRAIN_DOPPLER_RANGE:
+    - 0.0
+    - 480.0
+    TRAIN_SNR_RANGE:
+    - -5.0
+    - 5.0
+    TRUE_CSI_DISTILL_NORMALIZE: true
+    TRUE_CSI_DISTILL_WEIGHT: 0.0
+    T_HIST: 16
+    T_PRED: 8
+    USE_DESCRIPTOR: false
+    USE_RESIDUAL_GATE: false
+    USE_TRUE_CSI_DISTILL: false
+    USE_WIFO: true
+    USE_WIFO_ADAPTER: true
+    WIFO_ADAPTER_HIDDEN: 128
+    WIFO_ADAPTER_LR_MULT: 10.0
+    WIFO_ADAPTER_POOL: 4
+    WIFO_AUX_LOSS_WEIGHT: 1.0
+    WIFO_CKPT: model/wifo_base.pkl
+    WIFO_DELTA_LOSS_WEIGHT: 0.0
+    WIFO_H: 16
+    WIFO_LR_MULT: 5.0
+    WIFO_W: 16
+  PANOPTIC_FPN:
+    COMBINE:
+      ENABLED: true
+      INSTANCES_CONFIDENCE_THRESH: 0.5
+      OVERLAP_THRESH: 0.5
+      STUFF_AREA_LIMIT: 4096
+    INSTANCE_LOSS_WEIGHT: 1.0
+  PIXEL_MEAN:
+  - 103.53
+  - 116.28
+  - 123.675
+  PIXEL_STD:
+  - 1.0
+  - 1.0
+  - 1.0
+  PROPOSAL_GENERATOR:
+    MIN_SIZE: 0
+    NAME: RPN
+  RESNETS:
+    DEFORM_MODULATED: false
+    DEFORM_NUM_GROUPS: 1
+    DEFORM_ON_PER_STAGE:
+    - false
+    - false
+    - false
+    - false
+    DEPTH: 50
+    NORM: FrozenBN
+    NUM_GROUPS: 1
+    OUT_FEATURES:
+    - res2
+    - res3
+    - res4
+    - res5
+    RES2_OUT_CHANNELS: 256
+    RES5_DILATION: 1
+    STEM_OUT_CHANNELS: 64
+    STRIDE_IN_1X1: true
+    WIDTH_PER_GROUP: 64
+  RETINANET:
+    BBOX_REG_LOSS_TYPE: smooth_l1
+    BBOX_REG_WEIGHTS: &id002
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    FOCAL_LOSS_ALPHA: 0.25
+    FOCAL_LOSS_GAMMA: 2.0
+    IN_FEATURES:
+    - p3
+    - p4
+    - p5
+    - p6
+    - p7
+    IOU_LABELS:
+    - 0
+    - -1
+    - 1
+    IOU_THRESHOLDS:
+    - 0.4
+    - 0.5
+    NMS_THRESH_TEST: 0.5
+    NORM: ''
+    NUM_CLASSES: 80
+    NUM_CONVS: 4
+    PRIOR_PROB: 0.01
+    SCORE_THRESH_TEST: 0.05
+    SMOOTH_L1_LOSS_BETA: 0.1
+    TOPK_CANDIDATES_TEST: 1000
+  ROI_BOX_CASCADE_HEAD:
+    BBOX_REG_WEIGHTS:
+    - &id001
+      - 10.0
+      - 10.0
+      - 5.0
+      - 5.0
+    - - 20.0
+      - 20.0
+      - 10.0
+      - 10.0
+    - - 30.0
+      - 30.0
+      - 15.0
+      - 15.0
+    IOUS:
+    - 0.5
+    - 0.6
+    - 0.7
+  ROI_BOX_HEAD:
+    BBOX_REG_LOSS_TYPE: smooth_l1
+    BBOX_REG_LOSS_WEIGHT: 1.0
+    BBOX_REG_WEIGHTS: *id001
+    CLS_AGNOSTIC_BBOX_REG: false
+    CONV_DIM: 256
+    FC_DIM: 1024
+    FED_LOSS_FREQ_WEIGHT_POWER: 0.5
+    FED_LOSS_NUM_CLASSES: 50
+    NAME: FastRCNNConvFCHead
+    NORM: ''
+    NUM_CONV: 0
+    NUM_FC: 2
+    POOLER_RESOLUTION: 7
+    POOLER_SAMPLING_RATIO: 0
+    POOLER_TYPE: ROIAlignV2
+    SMOOTH_L1_BETA: 0.0
+    TRAIN_ON_PRED_BOXES: false
+    USE_FED_LOSS: false
+    USE_SIGMOID_CE: false
+  ROI_HEADS:
+    BATCH_SIZE_PER_IMAGE: 512
+    IN_FEATURES:
+    - p2
+    - p3
+    - p4
+    - p5
+    IOU_LABELS:
+    - 0
+    - 1
+    IOU_THRESHOLDS:
+    - 0.5
+    NAME: StandardROIHeads
+    NMS_THRESH_TEST: 0.5
+    NUM_CLASSES: 8
+    POSITIVE_FRACTION: 0.25
+    PROPOSAL_APPEND_GT: true
+    SCORE_THRESH_TEST: 0.05
+  ROI_KEYPOINT_HEAD:
+    CONV_DIMS:
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    LOSS_WEIGHT: 1.0
+    MIN_KEYPOINTS_PER_IMAGE: 1
+    NAME: KRCNNConvDeconvUpsampleHead
+    NORMALIZE_LOSS_BY_VISIBLE_KEYPOINTS: true
+    NUM_KEYPOINTS: 17
+    POOLER_RESOLUTION: 14
+    POOLER_SAMPLING_RATIO: 0
+    POOLER_TYPE: ROIAlignV2
+  ROI_MASK_HEAD:
+    CLS_AGNOSTIC_MASK: false
+    CONV_DIM: 256
+    NAME: MaskRCNNConvUpsampleHead
+    NORM: ''
+    NUM_CONV: 4
+    POOLER_RESOLUTION: 14
+    POOLER_SAMPLING_RATIO: 0
+    POOLER_TYPE: ROIAlignV2
+  RPN:
+    BATCH_SIZE_PER_IMAGE: 256
+    BBOX_REG_LOSS_TYPE: smooth_l1
+    BBOX_REG_LOSS_WEIGHT: 1.0
+    BBOX_REG_WEIGHTS: *id002
+    BOUNDARY_THRESH: -1
+    CONV_DIMS:
+    - -1
+    HEAD_NAME: StandardRPNHead
+    IN_FEATURES:
+    - p2
+    - p3
+    - p4
+    - p5
+    - p6
+    IOU_LABELS:
+    - 0
+    - -1
+    - 1
+    IOU_THRESHOLDS:
+    - 0.3
+    - 0.7
+    LOSS_WEIGHT: 1.0
+    NMS_THRESH: 0.7
+    POSITIVE_FRACTION: 0.5
+    POST_NMS_TOPK_TEST: 1000
+    POST_NMS_TOPK_TRAIN: 1000
+    PRE_NMS_TOPK_TEST: 1000
+    PRE_NMS_TOPK_TRAIN: 2000
+    SMOOTH_L1_BETA: 0.0
+  SEM_SEG_HEAD:
+    COMMON_STRIDE: 4
+    CONVS_DIM: 128
+    IGNORE_VALUE: 255
+    IN_FEATURES:
+    - p2
+    - p3
+    - p4
+    - p5
+    LOSS_WEIGHT: 1.0
+    NAME: SemSegFPNHead
+    NORM: GN
+    NUM_CLASSES: 54
+  WEIGHTS: ./output/ft0616_truecsi_distill001_lr2e6_5k/model_final.pth
+OUTPUT_DIR: ./output/paper_main_newhz/full_40.0hz
+SEED: 3407
+SOLVER:
+  AMP:
+    ENABLED: true
+  BASE_LR: 2.0e-05
+  BASE_LR_END: 0.0
+  BIAS_LR_FACTOR: 1.0
+  CHECKPOINT_PERIOD: 10000
+  CLIP_GRADIENTS:
+    CLIP_TYPE: norm
+    CLIP_VALUE: 5.0
+    ENABLED: true
+    NORM_TYPE: 2.0
+  EVAL_REPEAT: 50
+  GAMMA: 0.1
+  IMS_PER_BATCH: 1
+  LR_SCHEDULER_NAME: WarmupMultiStepLR
+  MAX_ITER: 150000
+  MOMENTUM: 0.9
+  NESTEROV: false
+  NUM_DECAYS: 3
+  REFERENCE_WORLD_SIZE: 0
+  RESCALE_INTERVAL: false
+  STEPS:
+  - 120000
+  - 140000
+  WARMUP_FACTOR: 0.001
+  WARMUP_ITERS: 1000
+  WARMUP_METHOD: linear
+  WEIGHT_DECAY: 0.05
+  WEIGHT_DECAY_BIAS: 1.0e-05
+  WEIGHT_DECAY_NORM: 0.0
+TEST:
+  AUG:
+    ENABLED: false
+    FLIP: true
+    MAX_SIZE: 4000
+    MIN_SIZES:
+    - 400
+    - 500
+    - 600
+    - 700
+    - 800
+    - 900
+    - 1000
+    - 1100
+    - 1200
+  DETECTIONS_PER_IMAGE: 100
+  EVAL_PERIOD: 0
+  EXPECTED_RESULTS: []
+  KEYPOINT_OKS_SIGMAS: []
+  PRECISE_BN:
+    ENABLED: false
+    NUM_ITER: 200
+VERSION: 2
+VIS_PERIOD: 0
+
+[07/17 13:35:21] detectron2 INFO: Full config saved to ./output/paper_main_newhz/full_40.0hz/config.yaml
+[07/17 13:35:27] d2.engine.defaults INFO: Model:
+SoM_MIMO_RCNN(
+  (backbone): SoM_MIMO_bacbone(
+    (source): FPN(
+      (fpn_lateral2): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1))
+      (fpn_output2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (fpn_lateral3): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+      (fpn_output3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (fpn_lateral4): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1))
+      (fpn_output4): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (fpn_lateral5): Conv2d(2048, 256, kernel_size=(1, 1), stride=(1, 1))
+      (fpn_output5): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (top_block): LastLevelMaxPool()
+      (bottom_up): ResNet(
+        (stem): BasicStem(
+          (conv1): Conv2d(
+            3, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False
+            (norm): FrozenBatchNorm2d(num_features=64, eps=1e-05)
+          )
+        )
+        (res2): Sequential(
+          (0): BottleneckBlock(
+            (shortcut): Conv2d(
+              64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv1): Conv2d(
+              64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=64, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=64, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+          )
+          (1): BottleneckBlock(
+            (conv1): Conv2d(
+              256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=64, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=64, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+          )
+          (2): BottleneckBlock(
+            (conv1): Conv2d(
+              256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=64, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=64, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+          )
+        )
+        (res3): Sequential(
+          (0): BottleneckBlock(
+            (shortcut): Conv2d(
+              256, 512, kernel_size=(1, 1), stride=(2, 2), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+            (conv1): Conv2d(
+              256, 128, kernel_size=(1, 1), stride=(2, 2), bias=False
+              (norm): FrozenBatchNorm2d(num_features=128, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=128, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+          )
+          (1): BottleneckBlock(
+            (conv1): Conv2d(
+              512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=128, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=128, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+          )
+          (2): BottleneckBlock(
+            (conv1): Conv2d(
+              512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=128, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=128, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+          )
+          (3): BottleneckBlock(
+            (conv1): Conv2d(
+              512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=128, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=128, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+          )
+        )
+        (res4): Sequential(
+          (0): BottleneckBlock(
+            (shortcut): Conv2d(
+              512, 1024, kernel_size=(1, 1), stride=(2, 2), bias=False
+              (norm): FrozenBatchNorm2d(num_features=1024, eps=1e-05)
+            )
+            (conv1): Conv2d(
+              512, 256, kernel_size=(1, 1), stride=(2, 2), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=1024, eps=1e-05)
+            )
+          )
+          (1): BottleneckBlock(
+            (conv1): Conv2d(
+              1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=1024, eps=1e-05)
+            )
+          )
+          (2): BottleneckBlock(
+            (conv1): Conv2d(
+              1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=1024, eps=1e-05)
+            )
+          )
+          (3): BottleneckBlock(
+            (conv1): Conv2d(
+              1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=1024, eps=1e-05)
+            )
+          )
+          (4): BottleneckBlock(
+            (conv1): Conv2d(
+              1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=1024, eps=1e-05)
+            )
+          )
+          (5): BottleneckBlock(
+            (conv1): Conv2d(
+              1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=256, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=1024, eps=1e-05)
+            )
+          )
+        )
+        (res5): Sequential(
+          (0): BottleneckBlock(
+            (shortcut): Conv2d(
+              1024, 2048, kernel_size=(1, 1), stride=(2, 2), bias=False
+              (norm): FrozenBatchNorm2d(num_features=2048, eps=1e-05)
+            )
+            (conv1): Conv2d(
+              1024, 512, kernel_size=(1, 1), stride=(2, 2), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=2048, eps=1e-05)
+            )
+          )
+          (1): BottleneckBlock(
+            (conv1): Conv2d(
+              2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=2048, eps=1e-05)
+            )
+          )
+          (2): BottleneckBlock(
+            (conv1): Conv2d(
+              2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+            (conv2): Conv2d(
+              512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=512, eps=1e-05)
+            )
+            (conv3): Conv2d(
+              512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False
+              (norm): FrozenBatchNorm2d(num_features=2048, eps=1e-05)
+            )
+          )
+        )
+      )
+    )
+    (activate): Tanh()
+    (encoder): Pyramid_U_encoder(
+      (sampler): ModuleDict(
+        (p2): Conv2d(256, 256, kernel_size=(2, 2), stride=(2, 2))
+        (p2_3): Conv2d(256, 256, kernel_size=(2, 2), stride=(2, 2))
+        (p5): Upsample(scale_factor=2.0, mode='bilinear')
+      )
+      (fusion): ModuleDict(
+        (p2+p3): Sequential(
+          (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (p2_3): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+        (p2_3+p4): Sequential(
+          (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (p3_4): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+        (p3_4+p5): Sequential(
+          (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (p4_5): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+      )
+      (SE): ModuleDict(
+        (p2+p3): Sequential(
+          (0): Linear(in_features=512, out_features=32, bias=True)
+          (1): GELU(approximate='none')
+          (2): Linear(in_features=32, out_features=512, bias=True)
+          (3): Sigmoid()
+        )
+        (p2_3+p4): Sequential(
+          (0): Linear(in_features=512, out_features=32, bias=True)
+          (1): GELU(approximate='none')
+          (2): Linear(in_features=32, out_features=512, bias=True)
+          (3): Sigmoid()
+        )
+        (p3_4+p5): Sequential(
+          (0): Linear(in_features=512, out_features=32, bias=True)
+          (1): GELU(approximate='none')
+          (2): Linear(in_features=32, out_features=512, bias=True)
+          (3): Sigmoid()
+        )
+      )
+      (global_avg_pool): AdaptiveAvgPool2d(output_size=(1, 1))
+    )
+    (decoder): Pyramid_U_decoder(
+      (sampler): ModuleDict(
+        (p5): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+        (p6): MaxPool2d(kernel_size=1, stride=2, padding=0, dilation=1, ceil_mode=False)
+        (p3): Upsample(scale_factor=2.0, mode='bilinear')
+        (p2): Upsample(scale_factor=2.0, mode='bilinear')
+      )
+      (seperate): ModuleDict(
+        (p4_5): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1))
+        (p3_4+p5): Sequential(
+          (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (p3_4): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1))
+        (p2_3+p4): Sequential(
+          (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (p2_3): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1))
+        (p2+p3): Sequential(
+          (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (SE): ModuleDict(
+        (p3_4+p5): Sequential(
+          (0): Linear(in_features=512, out_features=32, bias=True)
+          (1): GELU(approximate='none')
+          (2): Linear(in_features=32, out_features=512, bias=True)
+          (3): Sigmoid()
+        )
+        (p2_3+p4): Sequential(
+          (0): Linear(in_features=512, out_features=32, bias=True)
+          (1): GELU(approximate='none')
+          (2): Linear(in_features=32, out_features=512, bias=True)
+          (3): Sigmoid()
+        )
+        (p2+p3): Sequential(
+          (0): Linear(in_features=512, out_features=32, bias=True)
+          (1): GELU(approximate='none')
+          (2): Linear(in_features=32, out_features=512, bias=True)
+          (3): Sigmoid()
+        )
+      )
+      (global_avg_pool): AdaptiveAvgPool2d(output_size=(1, 1))
+    )
+    (channel): Channel()
+    (diversity_encoder): MIMO_encoder(
+      (channel_embedding): Mlp(
+        (fc1): Linear(in_features=1, out_features=64, bias=True)
+        (act): GELU(approximate='none')
+        (fc2): Linear(in_features=64, out_features=128, bias=True)
+        (drop): Dropout(p=0.0, inplace=False)
+      )
+      (global_avg_pool): AdaptiveAvgPool2d(output_size=(1, 1))
+      (channel_conv_pre): ModuleList(
+        (0-5): 6 x Sequential(
+          (0): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (SE): ModuleList(
+        (0-5): 6 x Sequential(
+          (0): Linear(in_features=512, out_features=512, bias=True)
+          (1): GELU(approximate='none')
+          (2): Linear(in_features=512, out_features=256, bias=True)
+          (3): Sigmoid()
+        )
+      )
+      (channel_conv_post): ModuleList(
+        (0-5): 6 x Sequential(
+          (0): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (3): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1))
+          (4): GELU(approximate='none')
+          (5): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+    )
+    (diversity_decoder): MIMO_decoder(
+      (channel_embedding): Mlp(
+        (fc1): Linear(in_features=1, out_features=64, bias=True)
+        (act): GELU(approximate='none')
+        (fc2): Linear(in_features=64, out_features=128, bias=True)
+        (drop): Dropout(p=0.0, inplace=False)
+      )
+      (global_avg_pool): AdaptiveAvgPool2d(output_size=(1, 1))
+      (channel_conv_pre): ModuleList(
+        (0-5): 6 x Sequential(
+          (0): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+      (SE): ModuleList(
+        (0-5): 6 x Sequential(
+          (0): Linear(in_features=512, out_features=512, bias=True)
+          (1): GELU(approximate='none')
+          (2): Linear(in_features=512, out_features=256, bias=True)
+          (3): Sigmoid()
+        )
+      )
+      (channel_conv_post): ModuleList(
+        (0-5): 6 x Sequential(
+          (0): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): GELU(approximate='none')
+          (2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (3): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1))
+          (4): GELU(approximate='none')
+          (5): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+    )
+    (compress): Conv2d(256, 48, kernel_size=(1, 1), stride=(1, 1))
+    (decompress): Conv2d(48, 256, kernel_size=(1, 1), stride=(1, 1))
+    (wifo): WiFoPredictor(
+      (model): WiFo(
+        (Embedding): DataEmbedding(
+          (value_embedding): TokenEmbedding(
+            (tokenConv): Conv3d(2, 512, kernel_size=(4, 4, 4), stride=(4, 4, 4))
+          )
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+        (blocks): ModuleList(
+          (0-5): 6 x Block(
+            (norm1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+            (attn): Attention(
+              (q): Linear(in_features=512, out_features=512, bias=True)
+              (k): Linear(in_features=512, out_features=512, bias=True)
+              (v): Linear(in_features=512, out_features=512, bias=True)
+              (proj): Linear(in_features=512, out_features=512, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=False)
+            )
+            (drop_path): Identity()
+            (norm2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=512, out_features=1024, bias=True)
+              (act): GELU(approximate='none')
+              (drop1): Dropout(p=0.0, inplace=False)
+              (norm): Identity()
+              (fc2): Linear(in_features=1024, out_features=512, bias=True)
+              (drop2): Dropout(p=0.0, inplace=False)
+            )
+          )
+        )
+        (norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (decoder_embed): Linear(in_features=512, out_features=512, bias=True)
+        (decoder_blocks): ModuleList(
+          (0-3): 4 x Block(
+            (norm1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+            (attn): Attention(
+              (q): Linear(in_features=512, out_features=512, bias=True)
+              (k): Linear(in_features=512, out_features=512, bias=True)
+              (v): Linear(in_features=512, out_features=512, bias=True)
+              (proj): Linear(in_features=512, out_features=512, bias=True)
+              (proj_drop): Dropout(p=0.0, inplace=False)
+            )
+            (drop_path): Identity()
+            (norm2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+            (mlp): Mlp(
+              (fc1): Linear(in_features=512, out_features=1024, bias=True)
+              (act): GELU(approximate='none')
+              (drop1): Dropout(p=0.0, inplace=False)
+              (norm): Identity()
+              (fc2): Linear(in_features=1024, out_features=512, bias=True)
+              (drop2): Dropout(p=0.0, inplace=False)
+            )
+          )
+        )
+        (decoder_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        (decoder_pred): Linear(in_features=512, out_features=128, bias=True)
+      )
+    )
+    (wifo_adapter_pool): AdaptiveAvgPool2d(output_size=(4, 4))
+    (wifo_adapter_out): Linear(in_features=128, out_features=8, bias=True)
+    (wifo_adapter): Sequential(
+      (0): Flatten(start_dim=1, end_dim=-1)
+      (1): Linear(in_features=40, out_features=128, bias=True)
+      (2): GELU(approximate='none')
+      (3): Linear(in_features=128, out_features=128, bias=True)
+      (4): GELU(approximate='none')
+      (5): Linear(in_features=128, out_features=8, bias=True)
+    )
+  )
+  (proposal_generator): RPN(
+    (rpn_head): StandardRPNHead(
+      (conv): Conv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)
+        (activation): ReLU()
+      )
+      (objectness_logits): Conv2d(256, 3, kernel_size=(1, 1), stride=(1, 1))
+      (anchor_deltas): Conv2d(256, 12, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (anchor_generator): DefaultAnchorGenerator(
+      (cell_anchors): BufferList()
+    )
+  )
+  (roi_heads): StandardROIHeads(
+    (box_pooler): ROIPooler(
+      (level_poolers): ModuleList(
+        (0): ROIAlign(output_size=(7, 7), spatial_scale=0.25, sampling_ratio=0, aligned=True)
+        (1): ROIAlign(output_size=(7, 7), spatial_scale=0.125, sampling_ratio=0, aligned=True)
+        (2): ROIAlign(output_size=(7, 7), spatial_scale=0.0625, sampling_ratio=0, aligned=True)
+        (3): ROIAlign(output_size=(7, 7), spatial_scale=0.03125, sampling_ratio=0, aligned=True)
+      )
+    )
+    (box_head): FastRCNNConvFCHead(
+      (flatten): Flatten(start_dim=1, end_dim=-1)
+      (fc1): Linear(in_features=12544, out_features=1024, bias=True)
+      (fc_relu1): ReLU()
+      (fc2): Linear(in_features=1024, out_features=1024, bias=True)
+      (fc_relu2): ReLU()
+    )
+    (box_predictor): FastRCNNOutputLayers(
+      (cls_score): Linear(in_features=1024, out_features=9, bias=True)
+      (bbox_pred): Linear(in_features=1024, out_features=32, bias=True)
+    )
+    (mask_pooler): ROIPooler(
+      (level_poolers): ModuleList(
+        (0): ROIAlign(output_size=(14, 14), spatial_scale=0.25, sampling_ratio=0, aligned=True)
+        (1): ROIAlign(output_size=(14, 14), spatial_scale=0.125, sampling_ratio=0, aligned=True)
+        (2): ROIAlign(output_size=(14, 14), spatial_scale=0.0625, sampling_ratio=0, aligned=True)
+        (3): ROIAlign(output_size=(14, 14), spatial_scale=0.03125, sampling_ratio=0, aligned=True)
+      )
+    )
+    (mask_head): MaskRCNNConvUpsampleHead(
+      (mask_fcn1): Conv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)
+        (activation): ReLU()
+      )
+      (mask_fcn2): Conv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)
+        (activation): ReLU()
+      )
+      (mask_fcn3): Conv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)
+        (activation): ReLU()
+      )
+      (mask_fcn4): Conv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)
+        (activation): ReLU()
+      )
+      (deconv): ConvTranspose2d(256, 256, kernel_size=(2, 2), stride=(2, 2))
+      (deconv_relu): ReLU()
+      (predictor): Conv2d(256, 8, kernel_size=(1, 1), stride=(1, 1))
+    )
+  )
+)
+[07/17 13:35:27] d2.checkpoint.detection_checkpoint INFO: [DetectionCheckpointer] Loading from ./output/ft0616_truecsi_distill001_lr2e6_5k/model_final.pth ...
+[07/17 13:35:27] fvcore.common.checkpoint INFO: [Checkpointer] Loading from ./output/ft0616_truecsi_distill001_lr2e6_5k/model_final.pth ...
+[07/17 13:35:42] d2.data.datasets.cityscapes INFO: 3 cities found in 'datasets/cityscapes/leftImg8bit/val/'.
+[07/17 13:35:42] d2.data.datasets.cityscapes INFO: Preprocessing cityscapes annotations ...
+[07/17 13:35:51] d2.data.datasets.cityscapes INFO: Loaded 500 images from datasets/cityscapes/leftImg8bit/val/
+[07/17 13:35:52] d2.data.build INFO: Distribution of instances among all 8 categories:
+[36m|  category  | #instances   |  category  | #instances   |  category  | #instances   |
+|:----------:|:-------------|:----------:|:-------------|:----------:|:-------------|
+|   person   | 3400         |   rider    | 544          |    car     | 4657         |
+|   truck    | 93           |    bus     | 98           |   train    | 23           |
+| motorcycle | 149          |  bicycle   | 1169         |            |              |
+|   total    | 10133        |            |              |            |              |[0m
+[07/17 13:35:52] d2.data.common INFO: Serializing the dataset using: <class 'detectron2.data.common._TorchSerializedList'>
+[07/17 13:35:52] d2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[07/17 13:35:52] d2.data.common INFO: Serialized dataset takes 12.85 MiB
+[07/17 13:35:52] d2.evaluation.evaluator INFO: Start inference on 500 batches
+[07/17 13:35:52] d2.evaluation.cityscapes_evaluation INFO: Writing cityscapes results to temporary directory /tmp/cityscapes_eval_6navmjoh ...
+[07/17 13:36:02] d2.evaluation.evaluator INFO: Inference done 1/500. Dataloading: 0.5552 s/iter. Inference: 9.4183 s/iter. Eval: 0.3064 s/iter. Total: 10.2919 s/iter. ETA=1:25:35
+[07/17 13:36:10] d2.evaluation.evaluator INFO: Inference done 11/500. Dataloading: 0.0134 s/iter. Inference: 0.3095 s/iter. Eval: 0.3963 s/iter. Total: 0.7192 s/iter. ETA=0:05:51
+[07/17 13:36:15] d2.evaluation.evaluator INFO: Inference done 18/500. Dataloading: 0.0139 s/iter. Inference: 0.3062 s/iter. Eval: 0.3994 s/iter. Total: 0.7196 s/iter. ETA=0:05:46
+[07/17 13:36:21] d2.evaluation.evaluator INFO: Inference done 27/500. Dataloading: 0.0140 s/iter. Inference: 0.2975 s/iter. Eval: 0.3898 s/iter. Total: 0.7014 s/iter. ETA=0:05:31
+[07/17 13:36:26] d2.evaluation.evaluator INFO: Inference done 34/500. Dataloading: 0.0140 s/iter. Inference: 0.2958 s/iter. Eval: 0.4105 s/iter. Total: 0.7205 s/iter. ETA=0:05:35
+[07/17 13:36:32] d2.evaluation.evaluator INFO: Inference done 41/500. Dataloading: 0.0144 s/iter. Inference: 0.2961 s/iter. Eval: 0.4148 s/iter. Total: 0.7255 s/iter. ETA=0:05:33
+[07/17 13:36:37] d2.evaluation.evaluator INFO: Inference done 48/500. Dataloading: 0.0146 s/iter. Inference: 0.2955 s/iter. Eval: 0.4479 s/iter. Total: 0.7583 s/iter. ETA=0:05:42
+[07/17 13:36:42] d2.evaluation.evaluator INFO: Inference done 53/500. Dataloading: 0.0148 s/iter. Inference: 0.2970 s/iter. Eval: 0.4746 s/iter. Total: 0.7866 s/iter. ETA=0:05:51
+[07/17 13:36:47] d2.evaluation.evaluator INFO: Inference done 58/500. Dataloading: 0.0153 s/iter. Inference: 0.2987 s/iter. Eval: 0.4938 s/iter. Total: 0.8080 s/iter. ETA=0:05:57
+[07/17 13:36:53] d2.evaluation.evaluator INFO: Inference done 62/500. Dataloading: 0.0154 s/iter. Inference: 0.2991 s/iter. Eval: 0.5333 s/iter. Total: 0.8480 s/iter. ETA=0:06:11
+[07/17 13:36:59] d2.evaluation.evaluator INFO: Inference done 69/500. Dataloading: 0.0149 s/iter. Inference: 0.2993 s/iter. Eval: 0.5386 s/iter. Total: 0.8530 s/iter. ETA=0:06:07
+[07/17 13:37:05] d2.evaluation.evaluator INFO: Inference done 75/500. Dataloading: 0.0150 s/iter. Inference: 0.2994 s/iter. Eval: 0.5485 s/iter. Total: 0.8631 s/iter. ETA=0:06:06
+[07/17 13:37:10] d2.evaluation.evaluator INFO: Inference done 80/500. Dataloading: 0.0151 s/iter. Inference: 0.3000 s/iter. Eval: 0.5726 s/iter. Total: 0.8879 s/iter. ETA=0:06:12
+[07/17 13:37:16] d2.evaluation.evaluator INFO: Inference done 86/500. Dataloading: 0.0152 s/iter. Inference: 0.2999 s/iter. Eval: 0.5816 s/iter. Total: 0.8970 s/iter. ETA=0:06:11
+[07/17 13:37:21] d2.evaluation.evaluator INFO: Inference done 90/500. Dataloading: 0.0152 s/iter. Inference: 0.3001 s/iter. Eval: 0.5988 s/iter. Total: 0.9144 s/iter. ETA=0:06:14
+[07/17 13:37:26] d2.evaluation.evaluator INFO: Inference done 96/500. Dataloading: 0.0153 s/iter. Inference: 0.2994 s/iter. Eval: 0.5956 s/iter. Total: 0.9106 s/iter. ETA=0:06:07
+[07/17 13:37:31] d2.evaluation.evaluator INFO: Inference done 101/500. Dataloading: 0.0152 s/iter. Inference: 0.2994 s/iter. Eval: 0.6027 s/iter. Total: 0.9175 s/iter. ETA=0:06:06
+[07/17 13:37:37] d2.evaluation.evaluator INFO: Inference done 109/500. Dataloading: 0.0152 s/iter. Inference: 0.2982 s/iter. Eval: 0.5826 s/iter. Total: 0.8962 s/iter. ETA=0:05:50
+[07/17 13:37:42] d2.evaluation.evaluator INFO: Inference done 118/500. Dataloading: 0.0150 s/iter. Inference: 0.2970 s/iter. Eval: 0.5685 s/iter. Total: 0.8808 s/iter. ETA=0:05:36
+[07/17 13:37:47] d2.evaluation.evaluator INFO: Inference done 125/500. Dataloading: 0.0150 s/iter. Inference: 0.2960 s/iter. Eval: 0.5602 s/iter. Total: 0.8715 s/iter. ETA=0:05:26
+[07/17 13:37:52] d2.evaluation.evaluator INFO: Inference done 132/500. Dataloading: 0.0151 s/iter. Inference: 0.2955 s/iter. Eval: 0.5545 s/iter. Total: 0.8654 s/iter. ETA=0:05:18
+[07/17 13:37:58] d2.evaluation.evaluator INFO: Inference done 137/500. Dataloading: 0.0151 s/iter. Inference: 0.2958 s/iter. Eval: 0.5639 s/iter. Total: 0.8750 s/iter. ETA=0:05:17
+[07/17 13:38:03] d2.evaluation.evaluator INFO: Inference done 143/500. Dataloading: 0.0151 s/iter. Inference: 0.2956 s/iter. Eval: 0.5645 s/iter. Total: 0.8756 s/iter. ETA=0:05:12
+[07/17 13:38:08] d2.evaluation.evaluator INFO: Inference done 149/500. Dataloading: 0.0152 s/iter. Inference: 0.2951 s/iter. Eval: 0.5642 s/iter. Total: 0.8749 s/iter. ETA=0:05:07
+[07/17 13:38:13] d2.evaluation.evaluator INFO: Inference done 160/500. Dataloading: 0.0152 s/iter. Inference: 0.2939 s/iter. Eval: 0.5438 s/iter. Total: 0.8532 s/iter. ETA=0:04:50
+[07/17 13:38:19] d2.evaluation.evaluator INFO: Inference done 167/500. Dataloading: 0.0152 s/iter. Inference: 0.2937 s/iter. Eval: 0.5426 s/iter. Total: 0.8518 s/iter. ETA=0:04:43
+[07/17 13:38:24] d2.evaluation.evaluator INFO: Inference done 174/500. Dataloading: 0.0152 s/iter. Inference: 0.2931 s/iter. Eval: 0.5384 s/iter. Total: 0.8469 s/iter. ETA=0:04:36
+[07/17 13:38:29] d2.evaluation.evaluator INFO: Inference done 180/500. Dataloading: 0.0152 s/iter. Inference: 0.2930 s/iter. Eval: 0.5389 s/iter. Total: 0.8473 s/iter. ETA=0:04:31
+[07/17 13:38:34] d2.evaluation.evaluator INFO: Inference done 185/500. Dataloading: 0.0152 s/iter. Inference: 0.2930 s/iter. Eval: 0.5431 s/iter. Total: 0.8516 s/iter. ETA=0:04:28
+[07/17 13:38:41] d2.evaluation.evaluator INFO: Inference done 190/500. Dataloading: 0.0152 s/iter. Inference: 0.2933 s/iter. Eval: 0.5534 s/iter. Total: 0.8621 s/iter. ETA=0:04:27
+[07/17 13:38:46] d2.evaluation.evaluator INFO: Inference done 196/500. Dataloading: 0.0152 s/iter. Inference: 0.2934 s/iter. Eval: 0.5589 s/iter. Total: 0.8678 s/iter. ETA=0:04:23
+[07/17 13:38:51] d2.evaluation.evaluator INFO: Inference done 200/500. Dataloading: 0.0152 s/iter. Inference: 0.2937 s/iter. Eval: 0.5667 s/iter. Total: 0.8758 s/iter. ETA=0:04:22
+[07/17 13:38:56] d2.evaluation.evaluator INFO: Inference done 205/500. Dataloading: 0.0153 s/iter. Inference: 0.2938 s/iter. Eval: 0.5721 s/iter. Total: 0.8814 s/iter. ETA=0:04:20
+[07/17 13:39:02] d2.evaluation.evaluator INFO: Inference done 210/500. Dataloading: 0.0152 s/iter. Inference: 0.2939 s/iter. Eval: 0.5769 s/iter. Total: 0.8863 s/iter. ETA=0:04:17
+[07/17 13:39:07] d2.evaluation.evaluator INFO: Inference done 218/500. Dataloading: 0.0152 s/iter. Inference: 0.2935 s/iter. Eval: 0.5704 s/iter. Total: 0.8794 s/iter. ETA=0:04:08
+[07/17 13:39:13] d2.evaluation.evaluator INFO: Inference done 224/500. Dataloading: 0.0152 s/iter. Inference: 0.2934 s/iter. Eval: 0.5707 s/iter. Total: 0.8795 s/iter. ETA=0:04:02
+[07/17 13:39:19] d2.evaluation.evaluator INFO: Inference done 233/500. Dataloading: 0.0152 s/iter. Inference: 0.2931 s/iter. Eval: 0.5687 s/iter. Total: 0.8772 s/iter. ETA=0:03:54
+[07/17 13:39:24] d2.evaluation.evaluator INFO: Inference done 239/500. Dataloading: 0.0152 s/iter. Inference: 0.2930 s/iter. Eval: 0.5694 s/iter. Total: 0.8779 s/iter. ETA=0:03:49
+[07/17 13:39:30] d2.evaluation.evaluator INFO: Inference done 245/500. Dataloading: 0.0152 s/iter. Inference: 0.2929 s/iter. Eval: 0.5691 s/iter. Total: 0.8774 s/iter. ETA=0:03:43
+[07/17 13:39:35] d2.evaluation.evaluator INFO: Inference done 252/500. Dataloading: 0.0151 s/iter. Inference: 0.2928 s/iter. Eval: 0.5659 s/iter. Total: 0.8741 s/iter. ETA=0:03:36
+[07/17 13:39:40] d2.evaluation.evaluator INFO: Inference done 258/500. Dataloading: 0.0151 s/iter. Inference: 0.2928 s/iter. Eval: 0.5666 s/iter. Total: 0.8748 s/iter. ETA=0:03:31
+[07/17 13:39:45] d2.evaluation.evaluator INFO: Inference done 267/500. Dataloading: 0.0151 s/iter. Inference: 0.2925 s/iter. Eval: 0.5602 s/iter. Total: 0.8681 s/iter. ETA=0:03:22
+[07/17 13:39:51] d2.evaluation.evaluator INFO: Inference done 275/500. Dataloading: 0.0150 s/iter. Inference: 0.2924 s/iter. Eval: 0.5540 s/iter. Total: 0.8616 s/iter. ETA=0:03:13
+[07/17 13:39:56] d2.evaluation.evaluator INFO: Inference done 286/500. Dataloading: 0.0150 s/iter. Inference: 0.2916 s/iter. Eval: 0.5396 s/iter. Total: 0.8464 s/iter. ETA=0:03:01
+[07/17 13:40:01] d2.evaluation.evaluator INFO: Inference done 298/500. Dataloading: 0.0149 s/iter. Inference: 0.2911 s/iter. Eval: 0.5233 s/iter. Total: 0.8295 s/iter. ETA=0:02:47
+[07/17 13:40:06] d2.evaluation.evaluator INFO: Inference done 310/500. Dataloading: 0.0149 s/iter. Inference: 0.2902 s/iter. Eval: 0.5092 s/iter. Total: 0.8146 s/iter. ETA=0:02:34
+[07/17 13:40:11] d2.evaluation.evaluator INFO: Inference done 323/500. Dataloading: 0.0148 s/iter. Inference: 0.2894 s/iter. Eval: 0.4928 s/iter. Total: 0.7973 s/iter. ETA=0:02:21
+[07/17 13:40:17] d2.evaluation.evaluator INFO: Inference done 333/500. Dataloading: 0.0148 s/iter. Inference: 0.2891 s/iter. Eval: 0.4883 s/iter. Total: 0.7925 s/iter. ETA=0:02:12
+[07/17 13:40:22] d2.evaluation.evaluator INFO: Inference done 339/500. Dataloading: 0.0148 s/iter. Inference: 0.2892 s/iter. Eval: 0.4908 s/iter. Total: 0.7950 s/iter. ETA=0:02:07
+[07/17 13:40:28] d2.evaluation.evaluator INFO: Inference done 344/500. Dataloading: 0.0148 s/iter. Inference: 0.2894 s/iter. Eval: 0.4947 s/iter. Total: 0.7991 s/iter. ETA=0:02:04
+[07/17 13:40:33] d2.evaluation.evaluator INFO: Inference done 351/500. Dataloading: 0.0149 s/iter. Inference: 0.2894 s/iter. Eval: 0.4951 s/iter. Total: 0.7996 s/iter. ETA=0:01:59
+[07/17 13:40:39] d2.evaluation.evaluator INFO: Inference done 357/500. Dataloading: 0.0148 s/iter. Inference: 0.2895 s/iter. Eval: 0.4961 s/iter. Total: 0.8007 s/iter. ETA=0:01:54
+[07/17 13:40:44] d2.evaluation.evaluator INFO: Inference done 364/500. Dataloading: 0.0148 s/iter. Inference: 0.2895 s/iter. Eval: 0.4949 s/iter. Total: 0.7995 s/iter. ETA=0:01:48
+[07/17 13:40:49] d2.evaluation.evaluator INFO: Inference done 371/500. Dataloading: 0.0149 s/iter. Inference: 0.2897 s/iter. Eval: 0.4977 s/iter. Total: 0.8025 s/iter. ETA=0:01:43
+[07/17 13:40:55] d2.evaluation.evaluator INFO: Inference done 376/500. Dataloading: 0.0149 s/iter. Inference: 0.2897 s/iter. Eval: 0.5008 s/iter. Total: 0.8056 s/iter. ETA=0:01:39
+[07/17 13:41:00] d2.evaluation.evaluator INFO: Inference done 381/500. Dataloading: 0.0149 s/iter. Inference: 0.2899 s/iter. Eval: 0.5044 s/iter. Total: 0.8094 s/iter. ETA=0:01:36
+[07/17 13:41:06] d2.evaluation.evaluator INFO: Inference done 387/500. Dataloading: 0.0149 s/iter. Inference: 0.2899 s/iter. Eval: 0.5075 s/iter. Total: 0.8125 s/iter. ETA=0:01:31
+[07/17 13:41:12] d2.evaluation.evaluator INFO: Inference done 393/500. Dataloading: 0.0149 s/iter. Inference: 0.2900 s/iter. Eval: 0.5088 s/iter. Total: 0.8140 s/iter. ETA=0:01:27
+[07/17 13:41:17] d2.evaluation.evaluator INFO: Inference done 398/500. Dataloading: 0.0148 s/iter. Inference: 0.2902 s/iter. Eval: 0.5118 s/iter. Total: 0.8170 s/iter. ETA=0:01:23
+[07/17 13:41:22] d2.evaluation.evaluator INFO: Inference done 406/500. Dataloading: 0.0148 s/iter. Inference: 0.2902 s/iter. Eval: 0.5109 s/iter. Total: 0.8161 s/iter. ETA=0:01:16
+[07/17 13:41:27] d2.evaluation.evaluator INFO: Inference done 413/500. Dataloading: 0.0149 s/iter. Inference: 0.2901 s/iter. Eval: 0.5098 s/iter. Total: 0.8150 s/iter. ETA=0:01:10
+[07/17 13:41:32] d2.evaluation.evaluator INFO: Inference done 419/500. Dataloading: 0.0149 s/iter. Inference: 0.2900 s/iter. Eval: 0.5109 s/iter. Total: 0.8161 s/iter. ETA=0:01:06
+[07/17 13:41:38] d2.evaluation.evaluator INFO: Inference done 425/500. Dataloading: 0.0149 s/iter. Inference: 0.2901 s/iter. Eval: 0.5113 s/iter. Total: 0.8165 s/iter. ETA=0:01:01
+[07/17 13:41:43] d2.evaluation.evaluator INFO: Inference done 432/500. Dataloading: 0.0148 s/iter. Inference: 0.2900 s/iter. Eval: 0.5098 s/iter. Total: 0.8149 s/iter. ETA=0:00:55
+[07/17 13:41:48] d2.evaluation.evaluator INFO: Inference done 438/500. Dataloading: 0.0148 s/iter. Inference: 0.2901 s/iter. Eval: 0.5105 s/iter. Total: 0.8157 s/iter. ETA=0:00:50
+[07/17 13:41:53] d2.evaluation.evaluator INFO: Inference done 446/500. Dataloading: 0.0148 s/iter. Inference: 0.2902 s/iter. Eval: 0.5099 s/iter. Total: 0.8151 s/iter. ETA=0:00:44
+[07/17 13:41:59] d2.evaluation.evaluator INFO: Inference done 454/500. Dataloading: 0.0148 s/iter. Inference: 0.2904 s/iter. Eval: 0.5074 s/iter. Total: 0.8128 s/iter. ETA=0:00:37
+[07/17 13:42:04] d2.evaluation.evaluator INFO: Inference done 462/500. Dataloading: 0.0148 s/iter. Inference: 0.2902 s/iter. Eval: 0.5044 s/iter. Total: 0.8096 s/iter. ETA=0:00:30
+[07/17 13:42:09] d2.evaluation.evaluator INFO: Inference done 467/500. Dataloading: 0.0148 s/iter. Inference: 0.2903 s/iter. Eval: 0.5064 s/iter. Total: 0.8117 s/iter. ETA=0:00:26
+[07/17 13:42:15] d2.evaluation.evaluator INFO: Inference done 472/500. Dataloading: 0.0148 s/iter. Inference: 0.2904 s/iter. Eval: 0.5103 s/iter. Total: 0.8158 s/iter. ETA=0:00:22
+[07/17 13:42:20] d2.evaluation.evaluator INFO: Inference done 477/500. Dataloading: 0.0149 s/iter. Inference: 0.2905 s/iter. Eval: 0.5131 s/iter. Total: 0.8188 s/iter. ETA=0:00:18
+[07/17 13:42:26] d2.evaluation.evaluator INFO: Inference done 485/500. Dataloading: 0.0149 s/iter. Inference: 0.2905 s/iter. Eval: 0.5134 s/iter. Total: 0.8190 s/iter. ETA=0:00:12
+[07/17 13:42:31] d2.evaluation.evaluator INFO: Inference done 493/500. Dataloading: 0.0149 s/iter. Inference: 0.2904 s/iter. Eval: 0.5106 s/iter. Total: 0.8161 s/iter. ETA=0:00:05
+[07/17 13:42:36] d2.evaluation.evaluator INFO: Total inference time: 0:06:43.288034 (0.814723 s / iter per device, on 1 devices)
+[07/17 13:42:36] d2.evaluation.evaluator INFO: Total inference pure compute time: 0:02:23 (0.290235 s / iter per device, on 1 devices)
+[07/17 13:42:36] d2.evaluation.cityscapes_evaluation INFO: Evaluating results under /tmp/cityscapes_eval_6navmjoh ...
+[07/17 13:48:07] d2.engine.defaults INFO: Evaluation results for cityscapes_fine_instance_seg_val in csv format:
+[07/17 13:48:07] d2.evaluation.testing INFO: copypaste: Task: segm
+[07/17 13:48:07] d2.evaluation.testing INFO: copypaste: AP,AP50
+[07/17 13:48:07] d2.evaluation.testing INFO: copypaste: 30.2752,55.4532

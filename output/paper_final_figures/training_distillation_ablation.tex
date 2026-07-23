@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering
+\caption{Training and global distillation ablation.}
+\label{tab:training_ablation}
+\begin{tabular}{l|cc}
+\hline
+Setting & 120 Hz AP/AP50 & 280 Hz AP/AP50 \\
+\hline
+WiFo residual initialization & 27.2213/49.8665 & 19.1128/36.1708 \\ 
++ task adaptation (final) & 27.4400/51.4532 & 21.1279/40.6520 \\ 
++ global distillation (0.005) & 27.5163/51.2283 & 20.3629/39.1962 \\ 
++ global distillation (0.01) & 28.0351/51.4929 & 20.8662/39.6088 \\ 
+\hline
+\end{tabular}
+\end{table}

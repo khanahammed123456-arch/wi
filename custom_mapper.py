@@ -12,7 +12,7 @@ from channel_generator import WiFoChannelGenerator
 
 class WiFo_SoM_Mapper:
     """
-    杈撳嚭锛?
+    输出：
         image:            [3, H, W]
         h_history_wifo:   [T_hist, H_wifo, W_wifo, 2]
         h_history_som:    [T_hist, Nr, Nt, 2]
@@ -156,4 +156,3 @@ class WiFo_SoM_Mapper:
             dataset_dict["instances"] = utils.filter_empty_instances(instances)
 
         return dataset_dict
-

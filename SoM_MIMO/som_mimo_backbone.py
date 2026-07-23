@@ -2,6 +2,7 @@ import math
 import os
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from detectron2.layers import ShapeSpec
 from detectron2.modeling.backbone import Backbone
@@ -67,7 +68,7 @@ class SoM_MIMO_bacbone(Backbone):
                 self.wifo_adapter_out,
             )
 
-        # ===== 璋冭瘯璁℃暟 =====
+        # ===== 调试计数 =====
         self._mce_select_debug_count = 0
         self._forward_csi_debug_count = 0
         self._wifo_adapter_debug_count = 0
@@ -75,7 +76,7 @@ class SoM_MIMO_bacbone(Backbone):
         self._residual_debug_count = 0
         self.csi_log_period = int(getattr(cfg.MODEL.MIMO, "CSI_LOG_PERIOD", 100))
 
-        # ===== eval鏃跺鍑篊SI鏍锋湰 =====
+        # ===== eval时导出CSI样本 =====
         self.enable_csi_dump = bool(getattr(cfg.MODEL.MIMO, "ENABLE_CSI_DUMP", False))
         self.csi_dump_dir = str(getattr(cfg.MODEL.MIMO, "CSI_DUMP_DIR", "tmp/csi_dump"))
         self.csi_dump_max_samples = int(getattr(cfg.MODEL.MIMO, "CSI_DUMP_MAX_SAMPLES", 500))
@@ -135,8 +136,8 @@ class SoM_MIMO_bacbone(Backbone):
 
     def _build_true_channel(self, h_gt_som, device, batch_size, snr_db=None):
         """
-        鏋勯€犵湡瀹炰紶鎾俊閬?h_true銆?
-        h_true 鐢ㄤ簬 y = h_true x + n
+        构造真实传播信道 h_true。
+        h_true 用于 y = h_true x + n
         """
         if h_gt_som is None:
             if self.cfg.MODEL.MIMO.CHANNEL:
@@ -164,7 +165,7 @@ class SoM_MIMO_bacbone(Backbone):
 
     def _get_outdated_channel(self, h_history_som):
         """
-        鍙栧巻鍙查噷鏈€鏂板彲鐢ㄧ殑 outdated CSI锛屼綔涓烘畫宸娴嬪熀搴曘€?
+        取历史里最新可用的 outdated CSI，作为残差预测基底。
         """
         if h_history_som is None:
             return None
@@ -182,7 +183,7 @@ class SoM_MIMO_bacbone(Backbone):
 
     def _project_wifo_to_residual(self, h_pred_wifo, h_outdated=None):
         """
-        WiFo 杈撳嚭 -> adapter -> 娈嬪樊 delta_h
+        WiFo 输出 -> adapter -> 残差 delta_h
         """
         if h_pred_wifo is None:
             return None
@@ -233,7 +234,7 @@ class SoM_MIMO_bacbone(Backbone):
 
     def _build_pred_channel_from_residual(self, h_outdated, delta_h):
         """
-        娈嬪樊棰勬祴锛?
+        残差预测：
             h_pred_som = h_outdated + delta_h
         """
         if h_outdated is None and delta_h is None:
@@ -258,7 +259,7 @@ class SoM_MIMO_bacbone(Backbone):
 
     def _select_mce_channel(self, h_true, h_history_som=None, h_pred_som=None):
         """
-        閫夋嫨绯荤粺鍐呴儴鈥滆涓衡€濈殑 CSI锛屽嵆 h_mce
+        选择系统内部“认为”的 CSI，即 h_mce
         """
         mode = str(getattr(self.cfg.MODEL.MIMO, "CSI_MODE", "pred")).lower()
 
@@ -431,7 +432,7 @@ class SoM_MIMO_bacbone(Backbone):
             snr_proxy_err_pred_mean=snr_proxy_err_pred_mean,
         )
 
-        # 1) 鏃ュ織鍙墦鍗板墠20涓?
+        # 1) 日志只打印前20个
         if self._csi_compare_debug_count < 20:
             print(
                 f"[CSI COMPARE] "
@@ -465,7 +466,7 @@ class SoM_MIMO_bacbone(Backbone):
             except Exception:
                 pass
 
-        # 2) dump 涓嶅彈鍓?0涓檺鍒?
+        # 2) dump 不受前20个限制
         self._dump_csi_sample(
             h_true=h_true,
             h_outdated=h_outdated,
@@ -515,10 +516,39 @@ class SoM_MIMO_bacbone(Backbone):
 
         return loss_shape + 0.3 * loss_scale
 
+    def _build_delta_loss(self, delta_h, h_true, h_outdated):
+        delta_gt = (h_true - h_outdated).detach()
+        return torch.mean(torch.abs(delta_h - delta_gt))
+
+    def _build_feature_distill_loss(self, student, teacher):
+        eps = 1e-6
+        teacher = teacher.detach()
+        if bool(getattr(self.cfg.MODEL.MIMO, "TRUE_CSI_DISTILL_NORMALIZE", True)):
+            dims = tuple(range(1, student.dim()))
+            student_scale = student.detach().abs().mean(dim=dims, keepdim=True)
+            teacher_scale = teacher.abs().mean(dim=dims, keepdim=True)
+            student = student / (student_scale + eps)
+            teacher = teacher / (teacher_scale + eps)
+        return F.smooth_l1_loss(student, teacher)
+
+    def _build_true_csi_teacher_prx(self, p_tx, h_true, noise_std):
+        if self.cfg.MODEL.MIMO.MCE:
+            tx_feature_teacher = self.diversity_encoder(p_tx, h_true, noise_std)
+        else:
+            tx_feature_teacher = p_tx
+
+        tx_feature_teacher, teacher_shape = self.before_channel(tx_feature_teacher)
+        rx_feature_teacher = self.channel(tx_feature_teacher, h_true, h_true, noise_std)
+        rx_feature_teacher = self.after_channel(rx_feature_teacher, teacher_shape)
+
+        if self.cfg.MODEL.MIMO.MCE:
+            return self.diversity_decoder(rx_feature_teacher, h_true, noise_std)
+        return rx_feature_teacher
+
     def forward(self, x, h_history_wifo=None, h_history_som=None, h_gt_som=None, snr_db=None):
         pyramid_tx = self.source(x)
 
-        # 1) 鐪熷疄浼犳挱淇￠亾
+        # 1) 真实传播信道
         h_true, noise_std = self._build_true_channel(
             h_gt_som=h_gt_som,
             device=x.device,
@@ -529,7 +559,7 @@ class SoM_MIMO_bacbone(Backbone):
         # 2) outdated CSI
         h_outdated = self._get_outdated_channel(h_history_som)
 
-        # 3) WiFo 棰勬祴 residual
+        # 3) WiFo 预测 residual
         delta_h = None
         h_pred_som = None
         if self.use_wifo and (h_history_wifo is not None):
@@ -547,14 +577,19 @@ class SoM_MIMO_bacbone(Backbone):
             snr_db=snr_db,
         )
 
-        # 5) CSI 杈呭姪鎹熷け
+        # 5) CSI 辅助损失
         aux_losses = {}
         if self.use_wifo and (h_pred_som is not None):
             loss_wifo_csi = self._build_mixed_csi_loss(h_pred_som, h_true)
             aux_weight = float(getattr(self.cfg.MODEL.MIMO, "WIFO_AUX_LOSS_WEIGHT", 1.0))
             aux_losses["loss_wifo_csi"] = aux_weight * loss_wifo_csi
 
-        # 6) 閫夋嫨绯荤粺璁や负鐨?CSI
+            delta_weight = float(getattr(self.cfg.MODEL.MIMO, "WIFO_DELTA_LOSS_WEIGHT", 0.0))
+            if delta_weight > 0 and delta_h is not None and h_outdated is not None:
+                loss_wifo_delta = self._build_delta_loss(delta_h, h_true, h_outdated)
+                aux_losses["loss_wifo_delta"] = delta_weight * loss_wifo_delta
+
+        # 6) 选择系统认为的 CSI
         h_mce = self._select_mce_channel(
             h_true=h_true,
             h_history_som=h_history_som,
@@ -570,7 +605,7 @@ class SoM_MIMO_bacbone(Backbone):
             )
             self._forward_csi_debug_count += 1
 
-        # 7) 閫氫俊閾?
+        # 7) 通信链
         if self.cfg.MODEL.MIMO.CHANNEL:
             if self.cfg.MODEL.MIMO.HFF:
                 p_tx = self.encoder(pyramid_tx)
@@ -588,6 +623,15 @@ class SoM_MIMO_bacbone(Backbone):
                     p_rx = self.diversity_decoder(rx_feature, h_mce, noise_std)
                 else:
                     p_rx = rx_feature
+
+                use_distill = bool(getattr(self.cfg.MODEL.MIMO, "USE_TRUE_CSI_DISTILL", False))
+                distill_weight = float(getattr(self.cfg.MODEL.MIMO, "TRUE_CSI_DISTILL_WEIGHT", 0.0))
+                if self.training and use_distill and distill_weight > 0 and h_pred_som is not None:
+                    with torch.no_grad():
+                        p_rx_teacher = self._build_true_csi_teacher_prx(p_tx, h_true, noise_std)
+                    aux_losses["loss_true_csi_distill"] = (
+                        distill_weight * self._build_feature_distill_loss(p_rx, p_rx_teacher)
+                    )
 
                 pyramid_rx = self.decoder(p_rx)
                 return pyramid_rx, pyramid_rx, pyramid_tx, aux_losses

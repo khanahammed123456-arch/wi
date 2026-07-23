@@ -1,0 +1,6 @@
+model/SoM_MIMO_C48.pth filter=lfs diff=lfs merge=lfs -text
+model/wifo_base.pkl filter=lfs diff=lfs merge=lfs -text
+model/0616/model_final.pth filter=lfs diff=lfs merge=lfs -text
+model/0616/model_0019999.pth filter=lfs diff=lfs merge=lfs -text
+output/ft0616_delta0_lr2e6_5k/model_final.pth filter=lfs diff=lfs merge=lfs -text
+output/ft0616_truecsi_distill001_lr2e6_5k/model_final.pth filter=lfs diff=lfs merge=lfs -text

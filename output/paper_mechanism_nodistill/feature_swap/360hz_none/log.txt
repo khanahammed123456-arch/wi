@@ -1,0 +1,50 @@
+[07/21 12:09:25] detectron2 INFO: Base weights: ./model/0616/model_0019999.pth
+[07/21 12:09:25] detectron2 INFO: Donor weights: ./output/ft0616_delta0_lr2e6_5k/model_final.pth
+[07/21 12:09:25] detectron2 INFO: Swap layers: [none]
+[07/21 12:09:25] detectron2 INFO: Doppler=360.0Hz SNR=0.0dB max_iter=-1
+[07/21 12:09:29] d2.checkpoint.detection_checkpoint INFO: [DetectionCheckpointer] Loading from ./model/0616/model_0019999.pth ...
+[07/21 12:09:49] d2.checkpoint.detection_checkpoint INFO: [DetectionCheckpointer] Loading from ./output/ft0616_delta0_lr2e6_5k/model_final.pth ...
+[07/21 12:10:03] d2.data.datasets.cityscapes INFO: 3 cities found in 'datasets/cityscapes/leftImg8bit/val/'.
+[07/21 12:10:03] d2.data.datasets.cityscapes INFO: Preprocessing cityscapes annotations ...
+[07/21 12:10:14] d2.data.datasets.cityscapes INFO: Loaded 500 images from datasets/cityscapes/leftImg8bit/val/
+[07/21 12:10:14] d2.data.build INFO: Distribution of instances among all 8 categories:
+[36m|  category  | #instances   |  category  | #instances   |  category  | #instances   |
+|:----------:|:-------------|:----------:|:-------------|:----------:|:-------------|
+|   person   | 3400         |   rider    | 544          |    car     | 4657         |
+|   truck    | 93           |    bus     | 98           |   train    | 23           |
+| motorcycle | 149          |  bicycle   | 1169         |            |              |
+|   total    | 10133        |            |              |            |              |[0m
+[07/21 12:10:14] d2.data.common INFO: Serializing the dataset using: <class 'detectron2.data.common._TorchSerializedList'>
+[07/21 12:10:14] d2.data.common INFO: Serializing 500 elements to byte tensors and concatenating them all ...
+[07/21 12:10:14] d2.data.common INFO: Serialized dataset takes 12.85 MiB
+[07/21 12:10:14] d2.evaluation.cityscapes_evaluation INFO: Writing cityscapes results to temporary directory /tmp/cityscapes_eval_uu0_js4s ...
+[07/21 12:10:48] detectron2 INFO: Feature swap inference 20/500. compute=1.1761s/iter ETA=0:14:23
+[07/21 12:11:05] detectron2 INFO: Feature swap inference 40/500. compute=0.7455s/iter ETA=0:10:39
+[07/21 12:11:28] detectron2 INFO: Feature swap inference 60/500. compute=0.6084s/iter ETA=0:09:51
+[07/21 12:11:47] detectron2 INFO: Feature swap inference 80/500. compute=0.5339s/iter ETA=0:08:45
+[07/21 12:12:06] detectron2 INFO: Feature swap inference 100/500. compute=0.4896s/iter ETA=0:08:04
+[07/21 12:12:23] detectron2 INFO: Feature swap inference 120/500. compute=0.4591s/iter ETA=0:07:16
+[07/21 12:12:42] detectron2 INFO: Feature swap inference 140/500. compute=0.4378s/iter ETA=0:06:51
+[07/21 12:12:59] detectron2 INFO: Feature swap inference 160/500. compute=0.4209s/iter ETA=0:06:16
+[07/21 12:13:20] detectron2 INFO: Feature swap inference 180/500. compute=0.4088s/iter ETA=0:05:55
+[07/21 12:13:44] detectron2 INFO: Feature swap inference 200/500. compute=0.4002s/iter ETA=0:05:39
+[07/21 12:14:04] detectron2 INFO: Feature swap inference 220/500. compute=0.3923s/iter ETA=0:05:16
+[07/21 12:14:23] detectron2 INFO: Feature swap inference 240/500. compute=0.3853s/iter ETA=0:04:50
+[07/21 12:14:39] detectron2 INFO: Feature swap inference 260/500. compute=0.3791s/iter ETA=0:04:24
+[07/21 12:14:55] detectron2 INFO: Feature swap inference 280/500. compute=0.3736s/iter ETA=0:03:57
+[07/21 12:15:05] detectron2 INFO: Feature swap inference 300/500. compute=0.3680s/iter ETA=0:03:29
+[07/21 12:15:15] detectron2 INFO: Feature swap inference 320/500. compute=0.3631s/iter ETA=0:03:02
+[07/21 12:15:29] detectron2 INFO: Feature swap inference 340/500. compute=0.3595s/iter ETA=0:02:40
+[07/21 12:15:49] detectron2 INFO: Feature swap inference 360/500. compute=0.3571s/iter ETA=0:02:20
+[07/21 12:16:09] detectron2 INFO: Feature swap inference 380/500. compute=0.3547s/iter ETA=0:02:01
+[07/21 12:16:32] detectron2 INFO: Feature swap inference 400/500. compute=0.3530s/iter ETA=0:01:42
+[07/21 12:16:51] detectron2 INFO: Feature swap inference 420/500. compute=0.3507s/iter ETA=0:01:21
+[07/21 12:17:05] detectron2 INFO: Feature swap inference 440/500. compute=0.3485s/iter ETA=0:01:00
+[07/21 12:17:21] detectron2 INFO: Feature swap inference 460/500. compute=0.3465s/iter ETA=0:00:39
+[07/21 12:17:42] detectron2 INFO: Feature swap inference 480/500. compute=0.3455s/iter ETA=0:00:20
+[07/21 12:18:00] detectron2 INFO: Feature swap inference 500/500. compute=0.3437s/iter ETA=0:00:00
+[07/21 12:18:00] d2.evaluation.cityscapes_evaluation INFO: Evaluating results under /tmp/cityscapes_eval_uu0_js4s ...
+[07/21 12:24:10] detectron2 INFO: Feature swapping evaluation results in csv format:
+[07/21 12:24:10] d2.evaluation.testing INFO: copypaste: Task: segm
+[07/21 12:24:10] d2.evaluation.testing INFO: copypaste: AP,AP50
+[07/21 12:24:10] d2.evaluation.testing INFO: copypaste: 15.3513,31.0067
